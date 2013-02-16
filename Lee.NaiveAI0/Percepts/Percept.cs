@@ -27,6 +27,8 @@ namespace Lee.NaiveAI0.Percepts
         {
         }
 
+        protected abstract void ExtractFeatures();
+
 
     }
 }

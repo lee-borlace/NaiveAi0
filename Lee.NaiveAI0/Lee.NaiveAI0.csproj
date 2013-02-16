@@ -42,17 +42,26 @@
   <ItemGroup>
     <Compile Include="AgentActions\AgentAction.cs" />
     <Compile Include="AgentActions\ConsoleOutputAction.cs" />
-    <Compile Include="Agents\StringEchoAgent.cs" />
-    <Compile Include="Agents\IAgent.cs" />
+    <Compile Include="Agents\BasicStringAgents\StringClusteringAgent1.cs" />
+    <Compile Include="Agents\BasicStringAgents\StringEchoAgent.cs" />
+    <Compile Include="Agents\Agent.cs" />
+    <Compile Include="Clustering\Cluster.cs" />
+    <Compile Include="Clustering\Clusterers\Clusterer.cs" />
+    <Compile Include="Clustering\Clusterers\FuzzyClusterer.cs" />
+    <Compile Include="Clustering\Clusterers\KMeansClusterer.cs" />
+    <Compile Include="Clustering\ClusteringVector.cs" />
+    <Compile Include="Clustering\ClusterMembership.cs" />
     <Compile Include="Percepts\Percept.cs" />
     <Compile Include="Percepts\StringPercept.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BaseUnits\BaseUnit.cs" />
+    <Compile Include="TestHarnesses\CommandLineTestHarness.cs" />
     <Compile Include="TestHarnesses\TestHarness.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Diagrams\ClassDiagram1.cd" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

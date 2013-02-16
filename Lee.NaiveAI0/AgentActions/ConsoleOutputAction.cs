@@ -10,7 +10,7 @@ namespace Lee.NaiveAI0.AgentActions
     /// </summary>
     public class ConsoleOutputAction : AgentAction
     {
-        public override string PrimaryPropertyKey
+        public override string PRIMARY_PROPERTY_KEY
         {
             get
             {

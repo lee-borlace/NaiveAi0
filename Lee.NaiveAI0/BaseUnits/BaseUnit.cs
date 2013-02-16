@@ -10,12 +10,43 @@ namespace Lee.NaiveAI0.BaseUnits
         /// <summary>
         /// Key into properties representing the primary value of the unit.
         /// </summary>
-        public abstract string PrimaryPropertyKey { get; }
+        public abstract string PRIMARY_PROPERTY_KEY { get; }
+
+        private Dictionary<string, object> _genericProperties;
 
         /// <summary>
-        /// The properties of the unit.
+        /// The generic properties of the unit. The values can be any object.
         /// </summary>
-        protected Dictionary<string, object> Properties { get; set; }
+        public Dictionary<string, object> GenericProperties
+        {
+            get
+            {
+                if(_genericProperties == null)
+                {
+                    _genericProperties = new Dictionary<string, object>();
+                }
+
+                return _genericProperties;
+            }
+        }
+
+        private Dictionary<string, decimal> _clusteringProperties;
+
+        /// <summary>
+        /// Clustering properties. Used for clustering.
+        /// </summary>
+        public Dictionary<string, decimal> ClusteringProperties
+        {
+            get
+            {
+                if (_clusteringProperties == null)
+                {
+                    _clusteringProperties = new Dictionary<string, decimal>();
+                }
+
+                return _clusteringProperties;
+            }
+        }
 
         /// <summary>
         /// Shorthand for accessing primary property.
@@ -24,11 +55,11 @@ namespace Lee.NaiveAI0.BaseUnits
         {
             get
             {
-                return Properties[PrimaryPropertyKey];
+                return GenericProperties[PRIMARY_PROPERTY_KEY];
             }
             set
             {
-                Properties[PrimaryPropertyKey] = value;
+                GenericProperties[PRIMARY_PROPERTY_KEY] = value;
             }
         }
 
@@ -37,7 +68,6 @@ namespace Lee.NaiveAI0.BaseUnits
         /// </summary>
         protected BaseUnit()
         {
-            Properties = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -46,8 +76,6 @@ namespace Lee.NaiveAI0.BaseUnits
         /// <param name="o"></param>
         protected BaseUnit(object o)
         {
-            Properties = new Dictionary<string, object>();
-
             PrimaryProperty = o;
         }
 
