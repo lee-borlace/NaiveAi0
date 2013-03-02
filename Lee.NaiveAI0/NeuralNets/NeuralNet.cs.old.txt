@@ -1,0 +1,525 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Lee.NaiveAI0.NeuralNets
+{
+    public delegate double ActivationFunction(double input);
+
+    public class NeuralNet
+    {
+        #region Core Properties
+
+        public List<Neuron> AllNeurons { get; set; }
+
+        public List<Neuron> Inputs { get; set; }
+
+        public List<Neuron> Outputs { get; set; }
+
+        public ActivationFunction ActivationFunction { get; set; }
+
+        #endregion
+
+        #region Used for Visualisation
+
+        private int _iteration = 0;
+
+        const int NUMBER_SEGMENTS = 20;
+
+        private double averageActivation = 0;
+
+        private List<double> _averageLevels;
+
+        #endregion
+
+
+        #region Constructors
+
+        public NeuralNet()
+        {
+
+        }
+
+        #endregion
+
+
+        #region Network Creation Methods
+        
+
+        public void CreateMinorityFunction()
+        {
+            AllNeurons = new List<Neuron>(4);
+
+            Neuron i_1 = new Neuron();
+
+            Neuron i_2 = new Neuron();
+
+            Neuron i_3 = new Neuron();
+
+            Neuron o_1 = new Neuron();
+
+
+        }
+
+
+        
+        //public void CreateNew(int neuronCount, int connectionsPerNeuron, double connectivitySparseness, ActivationFunction activationFunction)
+        //{
+        //    ActivationFunction = activationFunction;
+
+        //    AllNeurons = new List<Neuron>(neuronCount);
+
+        //    Random rand = new Random((int)DateTime.Now.Ticks);
+
+        //    //Create raw neurons.
+        //    for (int i = 0; i < neuronCount; i++)
+        //    {
+        //        Neuron newNeuron = new Neuron();
+
+        //        newNeuron.ActivationLevel = 0;
+        //        newNeuron.NeuronsIn = new List<WeightedNeuronConnection>();
+
+        //        AllNeurons.Add(newNeuron);
+        //    }
+
+        //    //Create links between neurons.
+        //    for (int i = 0; i < neuronCount; i++)
+        //    {
+        //        int lowestMinimumIndexForAssociation = i - (int)((connectionsPerNeuron / 2) * connectivitySparseness);
+        //        int minimumIndexForAssociation = lowestMinimumIndexForAssociation >= 0 ? lowestMinimumIndexForAssociation : 0;
+
+        //        int highestMaximumIndexForAssociation = i + (int)((connectionsPerNeuron / 2) * connectivitySparseness);
+        //        int maximumIndexForAssociation = highestMaximumIndexForAssociation < neuronCount ? highestMaximumIndexForAssociation : neuronCount;
+
+        //        Neuron thisNeuron = AllNeurons[i];
+
+        //        thisNeuron.NeuronsIn = new List<WeightedNeuronConnection>();
+
+        //        //Create connectionsPerNeuron connections.
+        //        for (int j = 0; j < connectionsPerNeuron; j++)
+        //        {
+        //            int connectedNeuronIndex = rand.Next(minimumIndexForAssociation, maximumIndexForAssociation);
+
+        //            Neuron connectedNeuron = AllNeurons[connectedNeuronIndex];
+
+        //            if (!thisNeuron.NeuronsIn.Exists(w => w.Neuron == connectedNeuron))
+        //            {
+        //                WeightedNeuronConnection connection = new WeightedNeuronConnection();
+        //                connection.Neuron = connectedNeuron;
+        //                connection.Weight = rand.NextDouble();
+
+        //                thisNeuron.NeuronsIn.Add(connection);
+        //            }
+        //        }
+        //    }
+
+
+
+        //    InputSets = new List<InputNeuronSet>();
+
+        //    InputNeuronSet inputSet = new InputNeuronSet();
+
+        //    for (int i = 0; i < 20; i++)
+        //    {
+        //        Neuron inputNeuron = AllNeurons[i];
+
+        //        inputNeuron.ActivationLevel = (rand.NextDouble() * 2) - 1;
+
+        //        //Clear out incoming connections for input neuron.
+        //        inputNeuron.NeuronsIn.Clear();
+
+        //        inputSet.Neurons.Add(inputNeuron);
+        //    }
+
+        //    InputSets.Add(inputSet);
+
+
+        //    OutputSets = new List<OutputNeuronSet>();
+
+        //    OutputNeuronSet outputSet = new OutputNeuronSet();
+
+        //    for (int i = AllNeurons.Count - 20; i < AllNeurons.Count; i++)
+        //    {
+        //        outputSet.Neurons.Add(AllNeurons[i]);
+        //    }
+
+        //    //Clear out outgoing connections for output neurons. TODO.
+        //    //foreach(Neuron neuron in AllNeurons)
+        //    //{
+
+        //    //}
+
+
+        //    OutputSets.Add(outputSet);
+
+
+        //}
+
+
+
+
+        ///// <summary>
+        ///// Create new netwrok where weights of each neuron sum to 1.
+        ///// </summary>
+        ///// <param name="neuronCount"></param>
+        ///// <param name="connectionsPerNeuron"></param>
+        ///// <param name="connectivitySparseness"></param>
+        ///// <param name="activationFunction"></param>
+        //public void CreateNewWeightsSumToOne(int neuronCount, int connectionsPerNeuron, double connectivitySparseness, ActivationFunction activationFunction)
+        //{
+        //    ActivationFunction = activationFunction;
+
+        //    AllNeurons = new List<Neuron>(neuronCount);
+
+        //    Random rand = new Random((int)DateTime.Now.Ticks);
+
+        //    //Create raw neurons.
+        //    for (int i = 0; i < neuronCount; i++)
+        //    {
+        //        Neuron newNeuron = new Neuron();
+
+        //        //newNeuron.ActivationLevel = rand.NextDouble();
+        //        newNeuron.ActivationLevel = 0;
+
+        //        newNeuron.NeuronsIn = new List<WeightedNeuronConnection>();
+
+        //        AllNeurons.Add(newNeuron);
+        //    }
+
+        //    //Create links between neurons.
+        //    for (int i = 0; i < neuronCount; i++)
+        //    {
+        //        int lowestMinimumIndexForAssociation = i - (int)((connectionsPerNeuron / 2) * connectivitySparseness);
+        //        int minimumIndexForAssociation = lowestMinimumIndexForAssociation >= 0 ? lowestMinimumIndexForAssociation : 0;
+
+        //        int highestMaximumIndexForAssociation = i + (int)((connectionsPerNeuron / 2) * connectivitySparseness);
+        //        int maximumIndexForAssociation = highestMaximumIndexForAssociation < neuronCount ? highestMaximumIndexForAssociation : neuronCount;
+
+        //        //int maximumIndexForAssociation = i;
+
+        //        double lastWeight = 0.0;
+
+        //        double sum = 0;
+
+        //        Neuron thisNeuron = AllNeurons[i];
+
+        //        thisNeuron.NeuronsIn = new List<WeightedNeuronConnection>();
+
+        //        //Console.Write("[");
+
+        //        //Create connectionsPerNeuron connections.
+        //        for (int j = 0; j < connectionsPerNeuron; j++)
+        //        {
+        //            int connectedNeuronIndex = rand.Next(minimumIndexForAssociation, maximumIndexForAssociation);
+
+
+        //            Neuron connectedNeuron = AllNeurons[connectedNeuronIndex];
+
+        //            //if (!thisNeuron.NeuronsIn.Exists(w => w.Neuron.NeuronIndex == connectedNeuron.NeuronIndex))
+        //            if (!thisNeuron.NeuronsIn.Exists(w => w.Neuron == connectedNeuron))
+        //            {
+
+        //                //Console.Write(connectedNeuronIndex);
+        //                //Console.Write(",");
+
+
+        //                //TODO : Evenly space weights.
+
+        //                WeightedNeuronConnection connection = new WeightedNeuronConnection();
+        //                connection.Neuron = connectedNeuron;
+
+        //                //Weights must sum up to 1.
+        //                double thisWeight;
+
+        //                if (j < connectionsPerNeuron - 1)
+        //                {
+        //                    double nextDouble = rand.NextDouble();
+        //                    double weightStart = lastWeight + (nextDouble * (1.0 - lastWeight));
+
+        //                    while (weightStart.Equals(0) || weightStart.Equals(1))
+        //                    {
+        //                        nextDouble = rand.NextDouble();
+        //                        weightStart = lastWeight + (nextDouble * (1.0 - lastWeight));
+        //                    }
+
+        //                    thisWeight = weightStart - lastWeight;
+
+        //                    lastWeight = weightStart;
+        //                }
+        //                else
+        //                {
+        //                    double nextDouble = rand.NextDouble();
+        //                    double weightStart = lastWeight + (nextDouble * (1.0 - lastWeight));
+
+        //                    while (weightStart.Equals(1))
+        //                    {
+        //                        nextDouble = rand.NextDouble();
+        //                        weightStart = lastWeight + (nextDouble * (1.0 - lastWeight));
+        //                    }
+
+        //                    thisWeight = 1.0 - weightStart;
+
+        //                    lastWeight = weightStart;
+        //                }
+
+        //                connection.Weight = thisWeight;
+
+        //                sum += thisWeight;
+
+        //                thisNeuron.NeuronsIn.Add(connection);
+        //            }
+        //        }
+
+        //        //Console.WriteLine(sum);
+
+        //        //Console.ReadKey();
+
+        //        //Console.WriteLine("]");
+
+        //        //Console.ReadKey();
+
+        //    }
+
+
+
+        //    InputSets = new List<InputNeuronSet>();
+
+        //    InputNeuronSet inputSet = new InputNeuronSet();
+
+        //    for (int i = 0; i < 20; i++)
+        //    //for (int i = neuronCount - (neuronCount / 2); i < (neuronCount - (neuronCount / 2)) + 20; i++)
+        //    {
+        //        Neuron inputNeuron = AllNeurons[i];
+
+        //        if (i == neuronCount - (neuronCount / 2))
+        //        {
+        //            inputNeuron.ActivationLevel = 0.2;
+        //        }
+
+        //        inputNeuron.ActivationLevel = rand.NextDouble();
+        //        //inputNeuron.ActivationLevel = 0.000001;
+
+        //        inputSet.Neurons.Add(inputNeuron);
+        //    }
+
+        //    InputSets.Add(inputSet);
+
+
+
+
+
+        //    OutputSets = new List<OutputNeuronSet>();
+
+        //    OutputNeuronSet outputSet = new OutputNeuronSet();
+
+        //    for (int i = AllNeurons.Count - 10; i < AllNeurons.Count; i++)
+        //    {
+        //        outputSet.Neurons.Add(AllNeurons[i]);
+        //    }
+
+        //    OutputSets.Add(outputSet);
+
+
+        //}
+
+
+        #endregion
+
+
+        public void ProcessIteration()
+        {
+
+            InitialiseVisualisation();
+            
+            int neuronCount = AllNeurons.Count;
+
+            for (int i = 0; i < neuronCount; i++)
+            {
+                Neuron neuron = AllNeurons[i];
+
+                neuron.ProcessInputs(ActivationFunction);
+
+                GatherDataForVisualisation(neuron, i, neuronCount);
+
+            }
+
+            _iteration++;
+        }
+
+
+
+        private void InitialiseVisualisation()
+        {
+            //List<int> histogram = new List<int>();
+
+            //for (int i = 0; i < 11; i++ )
+            //{
+            //    histogram.Add(0);
+            //}
+
+            _averageLevels = new List<double>();
+
+            for (int i = 0; i < NUMBER_SEGMENTS; i++)
+            {
+                _averageLevels.Add(0);
+            }
+
+        }
+
+
+
+        private void GatherDataForVisualisation(Neuron neuron, int neuronIndex, int neuronCount)
+        {
+            int segmentNumber = neuronIndex / (neuronCount / NUMBER_SEGMENTS);
+
+            _averageLevels[segmentNumber] += neuron.ActivationLevel;
+
+            //histogram[(int)(neuron.ActivationLevel * 10)]++;
+
+            //if (j >= AllNeurons.Count / NUMBER_SEGMENTS)
+            //{
+            //    segment++;
+
+            //    j = 0;
+            //}
+            //else
+            //{
+            //    j++;
+            //}
+
+            //_averageLevels[segment] += neuron.ActivationLevel;
+
+            //averageActivation += neuron.ActivationLevel;
+        }
+
+
+        //public string VisualiseNetwork(int neuronCount)
+        //{
+        //    StringBuilder sb = new StringBuilder();
+
+        //    sb.AppendLine();
+
+        //    foreach (OutputNeuronSet outputSet in OutputSets)
+        //    {
+        //        sb.AppendLine("OUTPUTS : ");
+
+        //        sb.Append("[");
+
+        //        foreach (Neuron neuron in outputSet.Neurons)
+        //        {
+        //            sb.Append(neuron.ActivationLevel.ToString("F"));
+        //            sb.Append(",");
+        //        }
+
+        //        sb.AppendLine("]");
+        //    }
+
+        //    sb.AppendLine();
+
+        //    for (int i = 0; i < NUMBER_SEGMENTS; i++)
+        //    {
+        //        sb.Append(i);
+
+        //        sb.Append(" : ");
+
+        //        _averageLevels[i] /= (neuronCount / NUMBER_SEGMENTS);
+
+        //        sb.AppendLine(_averageLevels[i].ToString());
+
+        //        //int lineLength = (int)(averageLevels[i] * 20);
+
+        //        //for (int k = 0; k < lineLength; k++)
+        //        //{
+        //        //    Console.Write("*");
+        //        //}
+
+        //    }
+
+
+        //    sb.AppendLine("-------------------");
+
+
+
+
+        //    //for (int i = 0; i < 11; i++)
+        //    //{
+        //    //    //Console.WriteLine(i + ":" + histogram[i]);
+
+        //    //    Console.Write(i + ": (" );
+
+        //    //    Console.Write(histogram[i]);
+
+        //    //    Console.Write(") ");
+
+        //    //    int lineLength = (int)((double)((double)histogram[i] / (double)AllNeurons.Count) * (double)50);
+
+        //    //    for(int j=0 ; j<lineLength ; j++ )
+        //    //    {
+        //    //        Console.Write("*");
+        //    //    }
+
+        //    //    Console.WriteLine();
+        //    //}
+
+        //    //Console.WriteLine("--------------");
+
+
+
+        //    //Console.WriteLine("Average activation :" + (averageActivation / AllNeurons.Count));
+
+        //    //Console.WriteLine(((numberOfMaxedOutNeurons / AllNeurons.Count) * 100) + "% at max.");
+
+        //    return sb.ToString();
+
+        //}
+
+
+        public string VisualiseInput()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("{input :{");
+
+            foreach (Neuron neuron in Inputs)
+            {
+                sb.Append(neuron.ActivationLevel.ToString("F"));
+
+                if (neuron != Inputs.Last())
+                {
+                    sb.Append(",");
+                }
+            }
+
+            sb.AppendLine("}}");
+
+            return sb.ToString();
+        }
+
+
+
+        public string VisualiseOutput()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("{output :{");
+
+            foreach (Neuron neuron in Outputs)
+            {
+                sb.Append(neuron.ActivationLevel.ToString("F"));
+
+                if (neuron != Outputs.Last())
+                {
+                    sb.Append(",");
+                }
+            }
+
+            sb.AppendLine("}}");
+
+            return sb.ToString();
+        }
+
+
+
+    }
+}

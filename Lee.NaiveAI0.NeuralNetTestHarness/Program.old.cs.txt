@@ -1,0 +1,85 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Lee.NaiveAI0.NeuralNets;
+
+namespace Lee.NaiveAI0.NeuralNetTestHarness
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //const int NEURON_COUNT = 20000;
+            //const int CONNECTIONS_PER_NEURON = 300;
+            //const double CONNECTIVITY_SPARSENESS = 2;
+
+            //NeuralNet neuralNet = new NeuralNet();
+
+            //Console.WriteLine("Creating neural net.");
+
+            //neuralNet.CreateNew(NEURON_COUNT, CONNECTIONS_PER_NEURON, CONNECTIVITY_SPARSENESS, ActivationFunction);
+
+            //Console.WriteLine("Done.");
+
+            //while (true)
+            //{
+            //    neuralNet.ProcessIteration();
+
+            //    Console.ReadKey();
+            //}
+
+            NeuralNet neuralNet = new NeuralNet();
+            neuralNet.CreateMinorityFunction();
+
+            for(int i=0 ; i<=1 ; i++)
+            {
+                for (int j = 0; j <= 1; j++)
+                {
+                    for (int k = 0; k <= 1; k++)
+                    {
+                        neuralNet.Inputs[0].ActivationLevel = i;
+                        neuralNet.Inputs[1].ActivationLevel = j;
+                        neuralNet.Inputs[2].ActivationLevel = k;
+
+                        neuralNet.ProcessIteration();
+
+                        Console.WriteLine(neuralNet.VisualiseInput());
+                        Console.WriteLine(neuralNet.VisualiseOutput());
+                    }
+                }
+            }
+
+
+        }
+
+
+        private static double ActivationFunction(double t)
+        {
+            double b = 1;
+
+            double threshold = -1.5;
+
+            //return t > 0.1 ? 1 : 0;
+
+            //return 1 / (1 + Math.Exp(-b * (t - 1)));
+
+            //t = (t * 2) - 1;
+            //return 1 / (1 + Math.Exp((-b * t)));
+
+            //return 1 / (1 + Math.Exp(-b * t));
+
+            //return Math.Sin(t * 0.5 * Math.PI);
+
+            //return ((1 / (1 + Math.Exp(-b * t))) - 0.5) * 2;
+
+            //return 1 / 1+ Math.Exp(-t);
+
+            return t > threshold ? 1 : 0;
+        }
+
+
+        
+
+    }
+}
